@@ -147,7 +147,7 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
         
         [n_hat, m_hat] = PredictState([current_n, current_m], 'n', map);
         if(n_hat*m_hat)
-           j = findStateSpaceInd(n_hat, m_hat, stateSpace);
+           j = findPointInd(m_hat, n_hat, stateSpace);
            if (j == gateInd)
               P(i, j, n_ind) = 1;
            else
@@ -158,7 +158,7 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
         
         [n_hat, m_hat] = PredictState([current_n, current_m], 's', map);
         if(n_hat*m_hat)
-           j = findStateSpaceInd(n_hat, m_hat, stateSpace);
+           j = findPointInd(m_hat, n_hat, stateSpace);
            if (j == gateInd)
               P(i, j, s_ind) = 1;
            else
@@ -169,7 +169,7 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
         
         [n_hat, m_hat] = PredictState([current_n, current_m], 'w', map);
         if(n_hat*m_hat)
-           j = findStateSpaceInd(n_hat, m_hat, stateSpace);
+           j = findPointInd(m_hat, n_hat, stateSpace);
            if (j == gateInd)
               P(i, j, w_ind) = 1;
            else
@@ -180,7 +180,7 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
         
         [n_hat, m_hat] = PredictState([current_n, current_m], 'e', map);
         if(n_hat*m_hat)
-           j = findStateSpaceInd(n_hat, m_hat, stateSpace);
+           j = findPointInd(m_hat, n_hat, stateSpace);
            if (j == gateInd)
               P(i, j, e_ind) = 1;
            else
@@ -221,15 +221,6 @@ function [n, m] = PredictState(state, control, map) % return [0, 0] for not vali
        m = 0;
        n = 0;
     end
-end
-
-function k = findStateSpaceInd(n, m, stateSpace) % return 0 if [n, m] not found
-    for k=1:size(stateSpace, 1)
-       if (stateSpace(k, 1) == n && stateSpace(k, 2) == m)
-          return; 
-       end
-    end
-    k = 0;
 end
 
 function t = findPointInd(m, n, points) % return 0 if not exit
