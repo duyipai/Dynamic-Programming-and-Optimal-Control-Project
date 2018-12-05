@@ -78,69 +78,68 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
        PC4 = 0;
        for u=m+1:M % up
            if (map(u, n) > 0)
-              t = findPointInd(u, n, cameras);
-              if (t)
-                  PC1 = cameras(t, 3)/(u-m);
-                  break;
-              else
-                  PC1 = 0;
+              t_cam = findPointInd(u, n, cameras);
+              if (t_cam && PC1 == 0)
+                  PC1 = cameras(t_cam, 3)/(u-m);
               end
-              t = findPointInd(u, n, mansion);
-              if (t)
+              t_man = findPointInd(u, n, mansion);
+              if (t_man)
                   PM = max([gamma_p/(u-m), PM]);
+                  break;
               end
-              break;
+              if (~t_cam && ~t_man)
+                 break; 
+              end
            end
        end
        
        for d=1:m-1 % down
            if (map(m-d, n) > 0)
-              t = findPointInd(m-d, n, cameras);
-              if (t)
-                  PC2 = cameras(t, 3)/d;
-                  break;
-              else
-                  PC2 = 0;
+              t_cam = findPointInd(m-d, n, cameras);
+              if (t_cam && PC2 == 0)
+                  PC2 = cameras(t_cam, 3)/d;
               end
-              t = findPointInd(m-d, n, mansion);
-              if (t)
+              t_man = findPointInd(m-d, n, mansion);
+              if (t_man)
                   PM = max([gamma_p/d, PM]);
+                  break;
               end
-              break;
+              if (~t_cam && ~t_man)
+                 break; 
+              end
            end
        end
        
        for l=1:n-1 % left
            if (map(m, n-l) > 0)
-              t = findPointInd(m, n-l, cameras);
-              if (t)
-                  PC3 = cameras(t, 3)/l;
-                  break;
-              else
-                  PC3 = 0;
+              t_cam = findPointInd(m, n-l, cameras);
+              if (t_cam && PC3 == 0)
+                  PC3 = cameras(t_cam, 3)/l;
               end
-              t = findPointInd(m, n-1, mansion);
-              if (t)
+              t_man = findPointInd(m, n-1, mansion);
+              if (t_man)
                   PM = max([gamma_p/l, PM]);
+                  break;
               end
-              break;
+              if(~t_cam && ~t_man)
+                break;
+              end
            end
        end
        
        for r=n+1:N % up
            if (map(m, r) > 0)
-              t = findPointInd(m, r, cameras);
-              if (t)
-                  PC4 = cameras(t, 3)/(r-n);
-                  break;
-              else
-                  PC4 = 0;
+              t_cam = findPointInd(m, r, cameras);
+              if (t_cam && PC4 == 0)
+                  PC4 = cameras(t_cam, 3)/(r-n);
               end
-              t = findPointInd(m, r, mansion);
-              if (t)
+              t_man = findPointInd(m, r, mansion);
+              if (t_man)
                   PM = max([gamma_p/(r-n), PM]);
               end
-              break;
+              if (~t_cam && ~t_man)
+                break; 
+              end
            end
        end
        
