@@ -64,7 +64,63 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
            p_ind = i;
        end
     end
-    
+    newStateSpace = [stateSpace, zeros(K, 1)];
+    for i=1:K
+       n = stateSpace(i, 1);
+       m = stateSpace(i, 2);
+       if (n == gate(1) && m == gate(2))
+          gateInd = i; 
+       end
+       for u=m+1:M % up
+           if (map(u, n) > 0)
+               t = findCameraInd(u, n, cameras);
+              if (t)
+                  P1 = cameras(t, 3)/(u-m);
+              else
+                  P1 = 0;
+                  break;
+              end
+           end
+       end
+       
+       for d=1:m-1 % down
+           if (map(m-d, n) > 0)
+               t = findCameraInd(m-d, n, cameras);
+              if (t)
+                  P2 = cameras(t, 3)/d;
+              else
+                  P2 = 0;
+                  break;
+              end
+           end
+       end
+       
+       for l=1:n-1 % left
+           if (map(m, n-l) > 0)
+               t = findCameraInd(m, n-l, cameras);
+              if (t)
+                  P3 = cameras(t, 3)/l;
+              else
+                  P3 = 0;
+                  break;
+              end
+           end
+       end
+       
+       for r=n+1:N % up
+           if (map(m, r) > 0)
+               t = findCameraInd(m, r, cameras);
+              if (t)
+                  P4 = cameras(t, 3)/(r-n);
+              else
+                  P4 = 0;
+                  break;
+              end
+           end
+       end
+       
+       newStateSpace(i, 3) = (1-P1)*(1-P2)*(1-P3)*(1-P4);
+    end
 end
 
 function [n, m] = PredictState(state, control, map) % return [0, 0] for not valid move
@@ -99,4 +155,14 @@ function k = findStateSpaceInd(n, m, stateSpace) % return 0 if [n, m] not found
        end
     end
     k = 0;
+end
+
+function t = findCameraInd(m, n, cameras) % return 0 if not camera
+    t = 0;
+    for i=1:size(cameras, 1)
+       if (cameras(i, 1) == n && cameras(i, 2) == m)
+          t = i;
+          return
+       end
+    end
 end
