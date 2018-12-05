@@ -44,4 +44,59 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
 
 % put your code here
 
+    K = size(stateSpace, 1);
+    L = size(controlSpace, 1);
+    [M, N] = size(map);
+    F = size(mansion, 1);
+    H = size(cameras, 1);
+    global p_c gamma_p;
+    P = zeros(K, K, L);
+    for i=1:L
+       if(controlSpace(i) == 'w')
+           w_ind = i;
+       elseif (controlSpace(i) == 'n')
+           n_ind = i;
+       elseif (controlSpace(i) == 'e')
+           e_ind = i;
+       elseif (controlSpace(i) == 's')
+           s_ind = i;
+       elseif (controlSpace(i) == 'p')
+           p_ind = i;
+       end
+    end
+    
+end
+
+function [n, m] = PredictState(state, control, map) % return [0, 0] for not valid move
+    n_now = state(1);
+    m_now = state(2);
+    [m_max, n_max] = size(map);
+    if (control == 'n' && m_now < m_max && map(m_now+1, n_now) <= 0)
+        n = n_now;
+        m = m_now + 1;
+    elseif (control == 's' && m_now > 1 && map(m_now-1, n_now) <= 0)
+        n = n_now;
+        m = m_now - 1;
+    elseif (control == 'w' && n_now > 1 && map(m_now, n_now-1) <=0)
+        n = n_now - 1;
+        m = m_now;
+    elseif (control == 'e' && n_now < n_max && map(m_now, n_now+1) <=0)
+        n = n_now + 1;
+        m = m_now;
+    elseif (control == 'p')
+        n = n_now;
+        m = m_now;
+    else
+       m = 0;
+       n = 0;
+    end
+end
+
+function k = findStateSpaceInd(n, m, stateSpace) % return 0 if [n, m] not found
+    for k=1:size(stateSpace, 1)
+       if (stateSpace(k, 1) == n && stateSpace(k, 2) == m)
+          return; 
+       end
+    end
+    k = 0;
 end
