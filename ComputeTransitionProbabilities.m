@@ -49,7 +49,7 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
     [M, N] = size(map);
     F = size(mansion, 1);
     H = size(cameras, 1);
-    global p_c gamma_p;
+    global p_c gamma_p pool_num_time_steps detected_additional_time_steps;
     P = zeros(K, K, L);
     for i=1:L
        if(controlSpace(i) == 'w')
@@ -64,7 +64,7 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
            p_ind = i;
        end
     end
-    newStateSpace = [stateSpace, zeros(K, 1)];
+    newStateSpace = [stateSpace, zeros(K, 2)];
     for i=1:K
        n = stateSpace(i, 1);
        m = stateSpace(i, 2);
@@ -75,9 +75,9 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
            if (map(u, n) > 0)
                t = findCameraInd(u, n, cameras);
               if (t)
-                  P1 = cameras(t, 3)/(u-m);
+                  PC1 = cameras(t, 3)/(u-m);
               else
-                  P1 = 0;
+                  PC1 = 0;
                   break;
               end
            end
@@ -87,9 +87,9 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
            if (map(m-d, n) > 0)
                t = findCameraInd(m-d, n, cameras);
               if (t)
-                  P2 = cameras(t, 3)/d;
+                  PC2 = cameras(t, 3)/d;
               else
-                  P2 = 0;
+                  PC2 = 0;
                   break;
               end
            end
@@ -99,9 +99,9 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
            if (map(m, n-l) > 0)
                t = findCameraInd(m, n-l, cameras);
               if (t)
-                  P3 = cameras(t, 3)/l;
+                  PC3 = cameras(t, 3)/l;
               else
-                  P3 = 0;
+                  PC3 = 0;
                   break;
               end
            end
@@ -111,16 +111,72 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
            if (map(m, r) > 0)
                t = findCameraInd(m, r, cameras);
               if (t)
-                  P4 = cameras(t, 3)/(r-n);
+                  PC4 = cameras(t, 3)/(r-n);
               else
-                  P4 = 0;
+                  PC4 = 0;
                   break;
               end
            end
        end
        
-       newStateSpace(i, 3) = (1-P1)*(1-P2)*(1-P3)*(1-P4);
+       pc = (1-PC1)*(1-PC2)*(1-PC3)*(1-PC4);
+       if (map(m, n) < 0) % water
+          pc = pc^pool_num_time_steps; 
+       end
+       newStateSpace(i, 3) = pc;
     end
+    % need to figure out mansion
+    
+    for i=1:K
+        current_m = newStateSpace(i, 2);
+        current_n = newStateSpace(i, 1);
+        
+        
+        [n_hat, m_hat] = PredictState([current_n, current_m], 'n', map);
+        if(n_hat*m_hat)
+           j = findStateSpaceInd(n_hat, m_hat, stateSpace);
+           if (j == gateInd)
+              P(i, j, n_ind) = 1;
+           else
+              P(i, j, n_ind) = newStateSpace(j, 3);
+              P(i, gateInd, n_ind) = 1 - newStateSpace(j, 3);
+           end
+        end
+        
+        [n_hat, m_hat] = PredictState([current_n, current_m], 's', map);
+        if(n_hat*m_hat)
+           j = findStateSpaceInd(n_hat, m_hat, stateSpace);
+           if (j == gateInd)
+              P(i, j, s_ind) = 1;
+           else
+              P(i, j, s_ind) = newStateSpace(j, 3);
+              P(i, gateInd, s_ind) = 1 - newStateSpace(j, 3);
+           end
+        end
+        
+        [n_hat, m_hat] = PredictState([current_n, current_m], 'w', map);
+        if(n_hat*m_hat)
+           j = findStateSpaceInd(n_hat, m_hat, stateSpace);
+           if (j == gateInd)
+              P(i, j, w_ind) = 1;
+           else
+              P(i, j, w_ind) = newStateSpace(j, 3);
+              P(i, gateInd, w_ind) = 1 - newStateSpace(j, 3);
+           end
+        end
+        
+        [n_hat, m_hat] = PredictState([current_n, current_m], 'e', map);
+        if(n_hat*m_hat)
+           j = findStateSpaceInd(n_hat, m_hat, stateSpace);
+           if (j == gateInd)
+              P(i, j, e_ind) = 1;
+           else
+              P(i, j, e_ind) = newStateSpace(j, 3);
+              P(i, gateInd, e_ind) = 1 - newStateSpace(j, 3);
+           end
+        end
+    end
+    
 end
 
 function [n, m] = PredictState(state, control, map) % return [0, 0] for not valid move
