@@ -81,13 +81,12 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
               t_cam = findPointInd(u, n, cameras);
               if (t_cam)
                   PC1 = cameras(t_cam, 3)/(u-m);
-                  break;
               end
               t_man = findPointInd(u, n, mansion);
               if (t_man)
                   PM = max([gamma_p/(u-m), PM]);
-                  break;
               end
+              break;
            end
        end
        
@@ -96,13 +95,12 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
               t_cam = findPointInd(m-d, n, cameras);
               if (t_cam)
                   PC2 = cameras(t_cam, 3)/d;
-                  break;
               end
               t_man = findPointInd(m-d, n, mansion);
               if (t_man)
                   PM = max([gamma_p/d, PM]);
-                  break;
               end
+              break;
            end
        end
        
@@ -111,13 +109,12 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
               t_cam = findPointInd(m, n-l, cameras);
               if (t_cam)
                   PC3 = cameras(t_cam, 3)/l;
-                  break;
               end
               t_man = findPointInd(m, n-1, mansion);
               if (t_man)
                   PM = max([gamma_p/l, PM]);
-                  break;
               end
+              break;
            end
        end
        
@@ -126,13 +123,12 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
               t_cam = findPointInd(m, r, cameras);
               if (t_cam)
                   PC4 = cameras(t_cam, 3)/(r-n);
-                  break;
               end
               t_man = findPointInd(m, r, mansion);
               if (t_man)
                   PM = max([gamma_p/(r-n), PM]);
-                  break;
               end
+              break;
            end
        end
        
