@@ -49,7 +49,7 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
     [M, N] = size(map);
     F = size(mansion, 1);
     H = size(cameras, 1);
-    global p_c gamma_p pool_num_time_steps detected_additional_time_steps;
+    global p_c gamma_p pool_num_time_steps;
     P = zeros(K, K, L);
     for i=1:L
        if(controlSpace(i) == 'w')
@@ -68,54 +68,79 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
     for i=1:K
        n = stateSpace(i, 1);
        m = stateSpace(i, 2);
+       PM = p_c;
        if (n == gate(1) && m == gate(2))
           gateInd = i; 
        end
+       PC1 = 0;
+       PC2 = 0;
+       PC3 = 0;
+       PC4 = 0;
        for u=m+1:M % up
            if (map(u, n) > 0)
-               t = findCameraInd(u, n, cameras);
+              t = findPointInd(u, n, cameras);
               if (t)
                   PC1 = cameras(t, 3)/(u-m);
+                  break;
               else
                   PC1 = 0;
-                  break;
               end
+              t = findPointInd(u, n, mansion);
+              if (t)
+                  PM = max([gamma_p/(u-m), PM]);
+              end
+              break;
            end
        end
        
        for d=1:m-1 % down
            if (map(m-d, n) > 0)
-               t = findCameraInd(m-d, n, cameras);
+              t = findPointInd(m-d, n, cameras);
               if (t)
                   PC2 = cameras(t, 3)/d;
+                  break;
               else
                   PC2 = 0;
-                  break;
               end
+              t = findPointInd(m-d, n, mansion);
+              if (t)
+                  PM = max([gamma_p/d, PM]);
+              end
+              break;
            end
        end
        
        for l=1:n-1 % left
            if (map(m, n-l) > 0)
-               t = findCameraInd(m, n-l, cameras);
+              t = findPointInd(m, n-l, cameras);
               if (t)
                   PC3 = cameras(t, 3)/l;
+                  break;
               else
                   PC3 = 0;
-                  break;
               end
+              t = findPointInd(m, n-1, mansion);
+              if (t)
+                  PM = max([gamma_p/l, PM]);
+              end
+              break;
            end
        end
        
        for r=n+1:N % up
            if (map(m, r) > 0)
-               t = findCameraInd(m, r, cameras);
+              t = findPointInd(m, r, cameras);
               if (t)
                   PC4 = cameras(t, 3)/(r-n);
+                  break;
               else
                   PC4 = 0;
-                  break;
               end
+              t = findPointInd(m, r, mansion);
+              if (t)
+                  PM = max([gamma_p/(r-n), PM]);
+              end
+              break;
            end
        end
        
@@ -124,8 +149,8 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
           pc = pc^pool_num_time_steps; 
        end
        newStateSpace(i, 3) = pc;
+       newStateSpace(i, 4) = PM;
     end
-    % need to figure out mansion
     
     for i=1:K
         current_m = newStateSpace(i, 2);
@@ -175,8 +200,14 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
               P(i, gateInd, e_ind) = 1 - newStateSpace(j, 3);
            end
         end
+        
+        if (i == gateInd)
+           P(i, i, p_ind) = 1-newStateSpace(i, 4);
+        else
+           P(i, i, p_ind) = newStateSpace(i, 3);
+           P(i, gateInd, p_ind) = 1-newStateSpace(i, 4) - newStateSpace(i, 3);
+        end
     end
-    
 end
 
 function [n, m] = PredictState(state, control, map) % return [0, 0] for not valid move
@@ -213,10 +244,10 @@ function k = findStateSpaceInd(n, m, stateSpace) % return 0 if [n, m] not found
     k = 0;
 end
 
-function t = findCameraInd(m, n, cameras) % return 0 if not camera
+function t = findPointInd(m, n, points) % return 0 if not exit
     t = 0;
-    for i=1:size(cameras, 1)
-       if (cameras(i, 1) == n && cameras(i, 2) == m)
+    for i=1:size(points, 1)
+       if (points(i, 1) == n && points(i, 2) == m)
           t = i;
           return
        end
