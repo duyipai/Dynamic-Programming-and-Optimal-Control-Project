@@ -204,8 +204,8 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
         if (i == gateInd)
            P(i, i, p_ind) = 1-newStateSpace(i, 4);
         else
-           P(i, i, p_ind) = newStateSpace(i, 3);
-           P(i, gateInd, p_ind) = 1-newStateSpace(i, 4) - newStateSpace(i, 3);
+           P(i, i, p_ind) = (1-newStateSpace(i, 4))*newStateSpace(i, 3);
+           P(i, gateInd, p_ind) = (1-newStateSpace(i, 4))*(1-newStateSpace(i, 3));
         end
     end
 end
