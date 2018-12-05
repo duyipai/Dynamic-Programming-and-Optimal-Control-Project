@@ -47,8 +47,6 @@ function P = ComputeTransitionProbabilities( stateSpace, controlSpace, map, gate
     K = size(stateSpace, 1);
     L = size(controlSpace, 1);
     [M, N] = size(map);
-    F = size(mansion, 1);
-    H = size(cameras, 1);
     global p_c gamma_p pool_num_time_steps;
     P = zeros(K, K, L);
     for i=1:L
