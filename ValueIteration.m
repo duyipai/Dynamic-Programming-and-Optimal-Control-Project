@@ -31,4 +31,19 @@ function [ J_opt, u_opt_ind ] = ValueIteration( P, G )
 
 % put your code here
 
+    [K, L] = size(G);
+    J_opt = ones(K, 1);
+    u_opt_ind = zeros(K, 1);
+    V_to_go = zeros(K, L);
+    while(1)
+       for i=1:L
+          V_to_go(:, i) = G(:, i) + P(:, :, i) * J_opt; 
+       end
+       [J_opt_run, u_opt_ind] = min(V_to_go, [], 2);
+       if(max(abs(J_opt_run-J_opt)) < 1e-5)
+          J_opt = J_opt_run;
+          break;
+       end
+       J_opt = J_opt_run;
+    end
 end

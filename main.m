@@ -36,7 +36,7 @@ transitionProbabilitiesImplemented = true;
 stageCostsImplemented = true;
 
 % set the following to true to test the correponding implementation
-valueIterationImplemented = false; 
+valueIterationImplemented = true; 
 policyIterationImplemented = false;
 linearProgrammingImplemented = false;
 

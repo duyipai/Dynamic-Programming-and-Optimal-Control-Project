@@ -129,9 +129,9 @@ function G = ComputeStageCosts( stateSpace, controlSpace, map, gate, mansion, ca
                end
            elseif (map(J_m, J_n) < 0)
                if (con == 'p')
-                   G(i, c) = 1 * P(i, j, c) + (6+1) * P(i, gateInd, c) + 1 - sum(P(i,:, c));
+                   G(i, c) = 1 * P(i, j, c) + 7 * P(i, gateInd, c) + 1 - sum(P(i,:, c));
                else
-                   G(i, c) = 4 * P(i, j, c) + (6+4) * P(i, gateInd, c) + 1 - sum(P(i,:, c));
+                   G(i, c) = 4 * P(i, j, c) + 10 * P(i, gateInd, c) + 1 - sum(P(i,:, c));
                end
                
            else

@@ -30,6 +30,21 @@ function [ J_opt, u_opt_ind ] = PolicyIteration( P, G )
 %       	input for each element of the state space.
 
 % put your code here
+    [K, L] = size(G);
+    J_opt = zeros(K, 1);
+    u_opt_ind = ones(K, 1);
+    while(1)
+       g = diag(G([1:K, u_opt_ind]));P
+       ind1 = repmat([1:K], [1, K]);
+       ind2 = repmat()
+       p = P([])
+       [J_opt_run, u_opt_ind] = min(V_to_go, [], 2);
+       if(max(abs(J_opt_run-J_opt)) < 1e-5)
+          J_opt = J_opt_run;
+          break;
+       end
+       J_opt = J_opt_run;
+    end
 
 end
 
