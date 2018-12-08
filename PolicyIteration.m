@@ -32,19 +32,21 @@ function [ J_opt, u_opt_ind ] = PolicyIteration( P, G )
 % put your code here
     [K, L] = size(G);
     J_opt = zeros(K, 1);
-    u_opt_ind = ones(K, 1);
+    u_opt_ind = 5*ones(K, 1);
+    P_2d = reshape(P, [K*L, K]);
     while(1)
-       g = diag(G([1:K, u_opt_ind]));P
-       ind1 = repmat([1:K], [1, K]);
-       ind2 = repmat()
-       p = P([])
-       [J_opt_run, u_opt_ind] = min(V_to_go, [], 2);
-       if(max(abs(J_opt_run-J_opt)) < 1e-5)
-          J_opt = J_opt_run;
+       g = diag(G(1:K, u_opt_ind'));
+       [sub1, sub2] = meshgrid(1:K, 1:K);
+       sub3 = repmat(u_opt_ind, [1, K]);
+       ind = sub2ind(size(P), sub1(:), sub2(:), sub3(:));
+       p = P(ind);
+       p = reshape(p, [K, K]);
+       J_run = (eye(K) - p)\g;
+       cost = G + reshape(P_2d*J_run, [K, L]);
+       [~, u_opt_ind] = min(cost, [], 2);
+       if(J_run == J_opt)
           break;
        end
-       J_opt = J_opt_run;
     end
-
 end
 

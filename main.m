@@ -37,7 +37,7 @@ stageCostsImplemented = true;
 
 % set the following to true to test the correponding implementation
 valueIterationImplemented = true; 
-policyIterationImplemented = false;
+policyIterationImplemented = true;
 linearProgrammingImplemented = false;
 
 
