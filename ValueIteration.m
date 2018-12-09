@@ -40,7 +40,7 @@ function [ J_opt, u_opt_ind ] = ValueIteration( P, G )
           V_to_go(:, i) = G(:, i) + P(:, :, i) * J_opt; 
        end
        [J_opt_run, u_opt_ind] = min(V_to_go, [], 2);
-       if(max(abs(J_opt_run-J_opt)) < 1e-5)
+       if(sum(abs(J_opt_run-J_opt)) < 1e-5)
           J_opt = J_opt_run;
           break;
        end

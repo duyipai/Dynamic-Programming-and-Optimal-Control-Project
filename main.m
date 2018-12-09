@@ -38,7 +38,7 @@ stageCostsImplemented = true;
 % set the following to true to test the correponding implementation
 valueIterationImplemented = true; 
 policyIterationImplemented = true;
-linearProgrammingImplemented = false;
+linearProgrammingImplemented = true;
 
 
 %% define problem size and generate map

@@ -30,6 +30,17 @@ function [ J_opt, u_opt_ind ] = LinearProgramming( P, G )
 %       	input for each element of the state space.
 
 % put your code here
-
+    [K, L] = size(G);
+    P_2d = permute(P, [1,3,2]);
+    P_2d = reshape(P_2d, [K*L, K]);
+    G_1d = reshape(G, [K*L, 1]);
+    T = repmat(eye(K), [L, 1]);
+    f = -ones(K, 1);
+    A = T-P_2d;
+    b = G_1d;
+    b(isinf(b)) = 10000;
+    J_opt = linprog(f, A, b);
+    cost = G + reshape(P_2d*J_opt, [K, L]);
+    [J_new, u_opt_ind] = min(cost, [], 2);
 end
 
