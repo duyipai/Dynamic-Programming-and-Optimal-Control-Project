@@ -38,9 +38,9 @@ function [ J_opt, u_opt_ind ] = LinearProgramming( P, G )
     f = -ones(K, 1);
     A = T-P_2d;
     b = G_1d;
-    b(isinf(b)) = 10000;
+    b(isinf(b)) = 10000000000000000;
     J_opt = linprog(f, A, b);
     cost = G + reshape(P_2d*J_opt, [K, L]);
-    [J_new, u_opt_ind] = min(cost, [], 2);
+    [J, u_opt_ind] = min(cost, [], 2);
 end
 

@@ -31,7 +31,6 @@ function [ J_opt, u_opt_ind ] = PolicyIteration( P, G )
 
 % put your code here
     [K, L] = size(G);
-    G(isinf(G)) = 1000;
     J_opt = zeros(K, 1);
     u_opt_ind = 5*ones(K, 1);
     P_2d = permute(P, [1, 3, 2]);
@@ -46,7 +45,7 @@ function [ J_opt, u_opt_ind ] = PolicyIteration( P, G )
        J_run = (eye(K) - p)\g;
        cost = G + reshape(P_2d*J_run, [K, L]);
        [~, u_opt_ind] = min(cost, [], 2);
-       if(J_run == J_opt)
+       if(sum(J_run == J_opt) == K)
           break;
        end
        J_opt = J_run;
