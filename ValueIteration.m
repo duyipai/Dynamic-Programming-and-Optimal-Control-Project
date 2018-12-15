@@ -38,7 +38,7 @@ function [ J_opt, u_opt_ind ] = ValueIteration( P, G )
     while(1)
        cost = G + reshape(P_2d*J_opt, [K, L]);
        [J_opt_run, u_opt_ind] = min(cost, [], 2);
-       if(sum(abs(J_opt_run-J_opt)) < 1e-5)
+       if(max(abs(J_opt_run-J_opt)) < 1e-10)
           J_opt = J_opt_run;
           break;
        end

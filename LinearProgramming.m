@@ -40,11 +40,18 @@ function [ J_opt, u_opt_ind ] = LinearProgramming( P, G )
     b = G_1d;
     A = A(isfinite(b), :);
     b = b(isfinite(b));
-    options = optimoptions('linprog','Algorithm','dual-simplex', 'Display', 'iter', 'OptimalityTolerance', 1e-10, 'Preprocess', 'none', 'Diagnostics', 'on');
+    options = optimoptions('linprog','Algorithm','dual-simplex', 'OptimalityTolerance', 1e-10, 'ConstraintTolerance', 1e-9, 'Preprocess', 'none', 'Display', 'iter');
     J_opt = linprog(f, A, b, [], [], [], [], options);
+    [sub1, sub2] = meshgrid(1:K, 1:K);
     cost = G + reshape(P_2d*J_opt, [K, L]);
-    [J_opt, u_opt_ind] = min(cost, [], 2);
+    [~, u_opt_ind] = min(cost, [], 2);
+    sub3 = repmat(u_opt_ind, [1, K]);
+    ind = sub2ind(size(P), sub2(:), sub1(:), sub3(:));
+    p = P(ind);
+    p = reshape(p, [K, K]);
+    g = diag(G(1:K, u_opt_ind'));
+    J_opt = (eye(K) - p)\g;
     cost = G + reshape(P_2d*J_opt, [K, L]);
-    [J_opt, u_opt_ind] = min(cost, [], 2);
+    [~, u_opt_ind] = min(cost, [], 2);
 end
 

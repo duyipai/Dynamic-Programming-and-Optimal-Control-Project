@@ -43,7 +43,7 @@ function [ J_opt, u_opt_ind ] = PolicyIteration( P, G )
        p = P(ind);
        p = reshape(p, [K, K]);
        J_run = (eye(K) - p)\g;
-       if(sum(J_run == J_opt) == K)
+       if(max(abs(J_run-J_opt)) < 1e-10)
           break;
        end
        cost = G + reshape(P_2d*J_run, [K, L]);

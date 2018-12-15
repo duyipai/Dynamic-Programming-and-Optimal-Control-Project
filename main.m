@@ -28,7 +28,7 @@ detected_additional_time_steps = 6;	% additional time steps if detected and brou
 %% options
 % set to true to generate a randon map of size mapSize, else set to false 
 % to load the pre-exsisting example map
-shouldGenerateMap = true;
+shouldGenerateMap = false;
 mapSize = [ 20, 40 ]; % [N, M]
 
 % set the following to true to test the correponding implementation
@@ -51,9 +51,10 @@ else
     load( 'exampleMap.mat' );
 end
 
+if(0)
 PlotMap( 1, mapSize, map, gate, mansion, cameras );
 PlotMap3( 2, mapSize, map, gate, mansion, cameras );
-
+end
 %% generate state space
 disp('generate state space');
 
@@ -124,6 +125,7 @@ if linearProgrammingImplemented
 end
 
 %% plot results
+if (0)
 disp('plot results');
 if (valueIterationImplemented ...
         && transitionProbabilitiesImplemented && stageCostsImplemented)
@@ -159,6 +161,7 @@ if (linearProgrammingImplemented ...
             stateSpace, J_opt_lp, u_opt_ind_lp );
     figure(figH3);
     title(strcat('Linear Programming (width=', num2str(mapSize(1)), ', height=', num2str(mapSize(2)), ')'));
+end
 end
 
 %% display that terminated
