@@ -28,7 +28,7 @@ detected_additional_time_steps = 6;	% additional time steps if detected and brou
 %% options
 % set to true to generate a randon map of size mapSize, else set to false 
 % to load the pre-exsisting example map
-shouldGenerateMap = false;
+shouldGenerateMap = true;
 mapSize = [ 20, 40 ]; % [N, M]
 
 % set the following to true to test the correponding implementation
@@ -109,7 +109,7 @@ end
 % Here we solve the stochastic shortest path problem by Value Iteration,
 % Policy Iteration, and Linear Programming
 if valueIterationImplemented
-    disp('solve stochastic shortest path problem with Value Iteration');
+    disp('solve stochastic shrtest path problem with Value Iteration');
     [ J_opt_vi, u_opt_ind_vi ] = ValueIteration( P, G );
 end
 
